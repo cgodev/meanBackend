@@ -10,17 +10,18 @@ const app = express();
 
 app.use(cors());
 
+/* Lectura y parseo del body */
+app.use(express.json());
+
 /* Conexion a la base de datos */
 dbConnection();
 
 /* Routes */
 
-app.get( '/', (req, res) => {
-    res.status(400).json({
-        ok: true,
-        msg: `Hola mundo`
-    })
-});
+app.use('/api/usuarios', require('./routes/usuarios'));
+app.use('/api/login', require('./routes/auth'));
+
+
 
 
 app.listen( process.env.PORT, () => {
