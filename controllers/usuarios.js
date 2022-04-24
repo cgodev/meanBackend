@@ -6,10 +6,20 @@ const { JWTGenerator } = require('../helpers/jwt');
 
 const getUsuarios = async (req, res) => {
 
-    const usuarios = await Usuario.find({}, 'nombre email role google');
+    const desde = Number(req.query.desde) || 0;
+    console.log(desde);
+
+    const [usuarios, total] = await Promise.all([
+        Usuario
+            .find({}, 'nombre email role google img')
+            .skip(desde)
+            .limit(5),
+        Usuario.countDocuments()
+    ])
     res.status(200).json({
         ok: true,
-        usuarios: usuarios
+        usuarios,
+        total
     })
 }
 
@@ -119,7 +129,7 @@ const deleteUsuario = async (req, res = response) => {
             })
         }
 
-        await Usuario.findByIdAndDelete( uid )
+        await Usuario.findByIdAndDelete(uid)
 
         return res.status(200).json({
             ok: true,
