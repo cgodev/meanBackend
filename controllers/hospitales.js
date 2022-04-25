@@ -1,4 +1,5 @@
-const { response } = require("express")
+const { response } = require("express");
+const hospital = require("../models/hospital");
 const Hospital = require('../models/hospital');
 
 const getHospitales = async (req, res = response) => {
@@ -43,18 +44,66 @@ const createHospital = async (req, res = response) => {
 
 }
 
-const updateHospital = (req, res = response) => {
-    res.json({
-        ok: true,
-        message: 'updateHospital'
-    })
+const updateHospital = async (req, res = response) => {
+
+    const hospitalId = req.params.id;
+    const uid = req.uid;
+    try {
+        const hospitalDB = await Hospital.findById(hospitalId);
+
+        if(!hospitalDB){
+            return res.status(404).json({
+                ok: true,
+                message: 'Hospital no encontrado'
+            })
+        }
+        const cambiosHospital = {
+            ...req.body,
+            user: uid
+        }
+
+        const hospitalActualizado = await Hospital.findByIdAndUpdate(hospitalId, cambiosHospital, {new: true });
+
+        res.status(200).json({
+            ok: true,
+            hospital: hospitalActualizado
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: true,
+            message: 'Error Updating hospital'
+        })
+    }
+    
 }
 
-const deleteHospital = (req, res = response) => {
-    res.json({
-        ok: true,
-        message: 'deleteHospital'
-    })
+const deleteHospital = async (req, res = response) => {
+    const hospitalId = req.params.id;
+    try {
+        const hospitalDB = await Hospital.findById(hospitalId);
+
+        if(!hospitalDB){
+            return res.status(404).json({
+                ok: true,
+                message: 'Hospital no encontrado'
+            })
+        }
+        
+
+        await Hospital.findByIdAndDelete(hospitalId);
+
+        res.status(200).json({
+            ok: true,
+            message: `Hospital Eliminado`
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: true,
+            message: 'Error Updating hospital'
+        })
+    }
 }
 
 module.exports = {

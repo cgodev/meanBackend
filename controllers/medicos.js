@@ -40,18 +40,73 @@ const createMedico = async (req, res = response) => {
     }
 }
 
-const updateMedico = (req, res = response) => {
-    res.json({
-        ok: true,
-        message: 'updateMedico'
-    })
+const updateMedico = async(req, res = response) => {
+
+    try {
+        const uid = req.uid;
+        const medicoId = req.params.id
+
+        const medicoDB = await Medico.findById(medicoId)
+
+        if(!medicoDB){
+            return res.status(404).json({
+                ok: false,
+                message: 'Medico not found'
+            })
+        }
+
+        const medicoUpdate = {
+            ...req.body,
+            user: uid
+        }
+        const medicoUpdated = await Medico.findByIdAndUpdate(medicoId, medicoUpdate, { new: true })
+        
+
+        res.status(200).json({
+            ok: true,
+            medico: medicoUpdated
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            message: `Unhandled Error`
+        })
+    }
+    
 }
 
-const deleteMedico = (req, res = response) => {
-    res.json({
-        ok: true,
-        message: 'deleteMedico'
-    })
+const deleteMedico = async(req, res = response) => {
+
+    try {
+        
+        const medicoId = req.params.id
+        const medicoDB = await Medico.findById(medicoId)
+
+        if(!medicoDB){
+            return res.status(404).json({
+                ok: false,
+                message: 'Medico not found'
+            })
+        }
+
+        
+        await Medico.findByIdAndDelete(medicoId);
+        
+
+        res.status(200).json({
+            ok: true,
+            message: 'Medico deleted'
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            message: `Unhandled Error`
+        })
+    }
 }
 
 module.exports = {

@@ -26,12 +26,14 @@ router.post('/', [
 
 router.put('/:id', [
     /* Middlewares */
-
+    validarJWT,
+    check('nombre', `El nombre del hospital es necesario`).not().isEmpty(),
+    validarCampos
 ], updateHospital);
 
 router.delete('/:id', [
     /* Middlewares */
-
+    validarJWT
 ], deleteHospital);
 
 
