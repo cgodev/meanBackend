@@ -39,8 +39,8 @@ const login = async (req, res = response) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({
-            ok: true,
-            message: `Error validating user`
+            ok: false,
+            message: `Error validating user ${error}`
         })
     }
 }

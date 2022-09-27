@@ -68,12 +68,13 @@ const createUsuario = async (req, res = response) => {
 
 const updateUsuario = async (req, res = response) => {
 
+    //Se extrae el id de los params...
     const uid = req.params.id;
 
     try {
-
+        //Se bsuca un usuario con este id
         const usuarioDB = await Usuario.findById(uid);
-
+        //Si no existe retornamos 303
         if (!usuarioDB) {
             return res.status(303).json({
                 ok: false,
@@ -81,11 +82,13 @@ const updateUsuario = async (req, res = response) => {
             })
         }
 
-
-        //TODO: Validar token y comprobar si el usuario es correcto.
-
-        //Update
+        //Extraccion de la data a actualizar del body...
         const { password, google, email, ...campos } = req.body;
+        console.log(`Campos: ${JSON.stringify(campos)}`);
+
+        //Si el usuario existe y requiere cambio de correo
+        //Validamos que no haya otro usuario con el mismo correo
+        //Caso contrario retornamos 400
 
         if (usuarioDB.email !== req.body.email) {
             const existeEmail = await Usuario.findOne({ email });
@@ -96,20 +99,25 @@ const updateUsuario = async (req, res = response) => {
                 })
             }
         }
-        if(!usuarioDB.google){
-            campos.email = email;
-        }else if( usuarioDB.email !== email){
-            return res.json({
-                ok: true,
-                usuario: usuarioUpdated
+
+        //Si el usuario es de google asignamos el email como campo a actualizar...
+        if(usuarioDB.google){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuarios de google no pueden cambiar su correo'
             })
+        }else if(usuarioDB.email !== email){
+            campos.email = email;
         }
+
+        
         
         const usuarioUpdated = await Usuario.findByIdAndUpdate(uid, campos, { new: true });
 
-        return res.status(400).json({
-            ok: false,
-            msg: 'Usuarios de google no pueden cambiar su correo'
+        return res.status(200).json({
+            ok: true,
+            msg: `Usuario actualizado correctamente.`,
+            usuario: usuarioUpdated
         })
 
     } catch (error) {
