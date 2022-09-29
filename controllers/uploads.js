@@ -44,6 +44,8 @@ const fileUpload = async (req, res = response) => {
         //Path de la imagen
         const path = `./uploads/${tipo}/${fileName}`;
 
+        console.log(`The path: ${path}`);
+
         file.mv(path, (err) => {
             if(err){
                 console.log(err);
@@ -99,6 +101,7 @@ const validExtensions = {
     jpg: 'jpg',
     jpeg: 'jpeg',
     gif: 'gif',
+    webp: 'webp'
 }
 
 module.exports = {

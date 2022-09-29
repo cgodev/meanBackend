@@ -26,7 +26,6 @@ const updateImage = async (type, uid, fileName) => {
             medico.img = fileName;
             await medico.save();
             return true;
-            break;
         case 'hospitales':
             const hospital = await Hospital.findById(uid)
             if (!hospital) {
@@ -38,8 +37,8 @@ const updateImage = async (type, uid, fileName) => {
 
             hospital.img = fileName;
             await hospital.save()
+            console.log(`Actualice`);
             return true;
-            break;
         case 'usuarios':
             const usuario = await Usuario.findById(uid)
             if (!usuario) {
@@ -52,7 +51,6 @@ const updateImage = async (type, uid, fileName) => {
             usuario.img = fileName;
             await usuario.save()
             return true;
-            break;
         default: 'Oops!!'
     }
 

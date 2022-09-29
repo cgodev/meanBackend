@@ -16,6 +16,10 @@ const getMedicos = async (req, res = response) => {
     }
 }
 
+
+
+
+
 const createMedico = async (req, res = response) => {
     const uid = req.uid;
     const medicoDB = new Medico( {
@@ -109,9 +113,39 @@ const deleteMedico = async(req, res = response) => {
     }
 }
 
+const getMedicoById = async (req, res = response) => {
+    try {
+        
+        const medicoId = req.params.id
+        const medicoDB = await Medico.findById(medicoId)
+                                        .populate('user', '_id nombre img')
+                                        .populate('hospital', '_id nombre img')
+
+        if(!medicoDB){
+            return res.status(404).json({
+                ok: false,
+                message: 'Medico not found'
+            })
+        }
+
+        res.status(200).json({
+            ok: true,
+            medico: medicoDB
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            message: `Unhandled Error`
+        })
+    }
+}
+
 module.exports = {
     getMedicos,
     createMedico,
     updateMedico,
-    deleteMedico
+    deleteMedico,
+    getMedicoById
 }
