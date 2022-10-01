@@ -11,6 +11,7 @@ const {
 } = require('../controllers/hospitales')
 
 const { validarJWT } = require('../middlewares/validar-jwt');
+const { validarOperacionAdmin } = require('../middlewares/validar-admin');
 
 const router = Router();
 router.get('/', getHospitales);
@@ -19,6 +20,7 @@ router.get('/', getHospitales);
 router.post('/', [
     /* Middlewares */
     validarJWT,
+    validarOperacionAdmin,
     check('nombre', `El nombre del hospital es necesario`).not().isEmpty(),
     validarCampos
 
@@ -27,13 +29,15 @@ router.post('/', [
 router.put('/:id', [
     /* Middlewares */
     validarJWT,
+    validarOperacionAdmin,
     check('nombre', `El nombre del hospital es necesario`).not().isEmpty(),
     validarCampos
 ], updateHospital);
 
 router.delete('/:id', [
     /* Middlewares */
-    validarJWT
+    validarJWT,
+    validarOperacionAdmin,
 ], deleteHospital);
 
 

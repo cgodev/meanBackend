@@ -3,6 +3,7 @@ const { response } = require('express');
 const { googleVerify } = require('../helpers/google-verify');
 const { JWTGenerator } = require('../helpers/jwt');
 const Usuario = require('../models/usuario');
+const { menuHelper } = require('../helpers/menu-helper');
 
 const login = async (req, res = response) => {
 
@@ -34,7 +35,8 @@ const login = async (req, res = response) => {
 
         return res.status(200).json({
             ok: true,
-            token
+            token,
+            menu: menuHelper(usuarioDB.role)
         })
     } catch (error) {
         console.log(error);
@@ -78,7 +80,8 @@ const googleSignIn = async (req, res = response) => {
 
         res.status(200).json({
             ok: true,
-            token
+            token,
+            menu: menuHelper(usuarioDB.role)
         })
 
     } catch (error) {
@@ -108,7 +111,8 @@ const renewToken = async (req, res = response) => {
             token,
             user: {
                 uid: _id, nombre, email, role, google, img
-            }
+            },
+            menu: menuHelper(usuarioDB.role)
         })
 
     } catch (error) {

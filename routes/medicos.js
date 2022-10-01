@@ -12,6 +12,7 @@ const {
 } = require('../controllers/medicos')
 
 const { validarJWT } = require('../middlewares/validar-jwt');
+const { validarOperacionAdmin } = require('../middlewares/validar-admin');
 
 const router = Router();
 router.get('/', getMedicos);
@@ -20,6 +21,7 @@ router.get('/', getMedicos);
 router.post('/', [
     /* Middlewares */
     validarJWT,
+    validarOperacionAdmin,
     check('nombre', `El nombre del medico es necesario`).not().isEmpty(),
     check('hospital', `El id del hospital es necesario`).not().isEmpty(),
     check('hospital', `El id del hospital debe de ser valido`).isMongoId(),
@@ -29,6 +31,7 @@ router.post('/', [
 router.put('/:id', [
     /* Middlewares */
     validarJWT,
+    validarOperacionAdmin,
     check('nombre', `El nombre del medico es necesario`).not().isEmpty(),
     check('hospital', `El id del hospital es necesario`).not().isEmpty(),
     check('hospital', `El id del hospital debe de ser valido`).isMongoId(),
@@ -38,11 +41,13 @@ router.put('/:id', [
 router.delete('/:id', [
     /* Middlewares */
     validarJWT,
+    validarOperacionAdmin,
 ], deleteMedico);
 
 router.get('/:id', [
     /* Middlewares */
     validarJWT,
+    validarOperacionAdmin,
 ], getMedicoById);
 
 
